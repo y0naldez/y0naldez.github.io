@@ -90,6 +90,42 @@ Usa estas máquinas como punto de partida, pero no como una lista definitiva. El
 
 ---
 
+## Temas clave que conviene reforzar
+
+### Permisos en Linux
+
+Además de practicar máquinas, también recomiendo reforzar algunos conceptos que suelen aparecer de forma práctica durante la preparación. Uno de ellos es entender bien los permisos en Linux, especialmente cuando trabajamos con archivos y directorios.
+
+A veces no basta con saber que un archivo existe. También necesitamos entender qué permisos tenemos sobre cada parte de la ruta. En Linux, los permisos no funcionan igual para archivos que para directorios. Por ejemplo, en un directorio, el permiso de lectura permite listar su contenido, pero el permiso de ejecución permite atravesarlo si conocemos el nombre exacto del archivo o subdirectorio.
+
+Esto es importante porque, en ciertos escenarios, podríamos no poder listar un directorio con `ls`, pero sí acceder a un archivo si conocemos la ruta completa y tenemos los permisos necesarios para atravesar los directorios anteriores.
+
+| Permiso en directorio | Qué permite |
+| --- | --- |
+| `r` lectura | Permite ver los nombres dentro del directorio, siempre que también existan los permisos necesarios para acceder. |
+| `w` escritura | Permite crear, borrar o renombrar archivos dentro del directorio, normalmente junto con `x`. |
+| `x` ejecución | Permite atravesar el directorio y acceder a elementos internos si se conoce su nombre exacto. |
+
+Por eso, durante la enumeración no solo debemos preguntarnos “qué archivos existen”, sino también “qué rutas conocemos”, “qué permisos tenemos sobre cada directorio” y “qué información podríamos leer si encontramos una ruta válida”.
+
+Este tipo de detalle ayuda mucho a construir metodología. No se trata de memorizar una ruta específica ni una técnica aislada, sino de entender cómo razona el sistema operativo y cómo podemos validar nuestras hipótesis de forma ordenada. En un examen práctico, esa diferencia puede ser clave: muchas veces el avance no viene de lanzar más herramientas, sino de interpretar correctamente permisos, rutas, usuarios, grupos y archivos accesibles.
+
+### Post-explotación con herramientas de enumeración
+
+Otro punto importante es practicar la post-explotación de forma ordenada. Después de obtener acceso a un sistema, no deberíamos limitarnos a buscar una flag o revisar archivos al azar. Lo ideal es tener una metodología clara para entender el entorno: usuario actual, grupos, permisos, procesos, servicios, tareas programadas, configuraciones, credenciales expuestas, rutas interesantes y posibles formas de escalar privilegios.
+
+En esta fase, las herramientas de enumeración pueden ser muy útiles, especialmente cuando nos quedamos atorados o sentimos que ya revisamos lo más evidente. Una de las más conocidas es **PEASS-ng**, que incluye scripts como `linpeas` y `winpeas` para apoyar la enumeración en Linux y Windows.
+
+Puedes revisar el proyecto aquí: <a href="https://github.com/peass-ng/PEASS-ng/" target="_blank" rel="noopener noreferrer">
+  PEASS-ng en GitHub
+</a>
+
+La idea no es depender completamente de estas herramientas ni ejecutar scripts sin entender su salida. Lo importante es usarlas como apoyo dentro de nuestra metodología de post-explotación: revisar los hallazgos, interpretar qué significan, validar manualmente lo relevante y decidir el siguiente paso con base en evidencia.
+
+Incluir herramientas como PEASS-ng en la práctica ayuda a reconocer patrones comunes, detectar configuraciones débiles y reforzar el hábito de enumerar antes de intentar escalar privilegios. Al final, la herramienta no reemplaza la metodología, pero sí puede ayudarnos a ser más ordenados y a no pasar por alto detalles importantes.
+
+---
+
 ## ¿Y qué hay de la parte Blue Team?
 
 En mi caso, debo ser honesto: fuera del contenido incluido en el path de preparación, no realicé demasiada práctica adicional enfocada específicamente en Blue Team.
@@ -126,6 +162,7 @@ En resumen, para la parte Blue Team no necesitas memorizar cada alerta posible. 
 
 ---
 
+
 ## Errores que debes evitar
 
 Después de pasar por el proceso de preparación y presentar el examen, hay varios errores que considero importantes mencionar. Algunos los cometí directamente y otros los fui identificando durante la preparación o al momento de construir el reporte.
@@ -158,9 +195,10 @@ Cada vez que obtenía un resultado relevante, agregaba inmediatamente:
 
 Esto me permitió mantener un historial claro de cada acción realizada y evitar tener que reconstruir procesos horas después.
 
-También recomiendo revisar el recurso de **Bruno Rocha Moura** sobre reportes para CPTS:
+También recomiendo revisar el recurso de **Bruno Rocha Moura** sobre reportes para CPTS: <a href="https://www.brunorochamoura.com/posts/cpts-report/" target="_blank" rel="noopener noreferrer">
+  Leer recurso sobre reportes CPTS
+</a>
 
-> [Leer recurso sobre reportes CPTS](https://www.brunorochamoura.com/posts/cpts-report/)
 
 
 Aunque está orientado a CPTS, muchos de los principios de documentación, estructura y presentación de evidencias también son aplicables a CJCA. Puede servir como una excelente referencia para entender cómo presentar hallazgos de forma clara, ordenada y profesional.
@@ -218,6 +256,39 @@ Por eso tuve que regresar a tomar evidencia adicional de puntos que no había do
 Mi recomendación es simple: documenta cada paso relevante. Si dudas si una captura vale la pena, probablemente sí la vale.
 
 Es mejor tener evidencia de sobra que descubrir al final que falta una captura importante para explicar cómo llegaste a un hallazgo.
+
+
+---
+## Recursos adicionales
+
+### Recurso adicional para practicar Blue Team
+
+Para quienes quieran practicar esta parte con un enfoque más cercano al análisis defensivo, he creado un recurso específico llamado **CJCA: Laboratorio Blue Team para practicar triage de alertas**.
+
+El laboratorio se llama **Aurelius Blue Alert Lab** y está diseñado para practicar triage de alertas en **Elastic/Kibana** desde un entorno seguro, sintético y orientado al análisis. El escenario simula a **Aurelius Labs**, una empresa ficticia donde el objetivo del analista es revisar un conjunto de alertas, investigar los logs relacionados y clasificarlas como **True Positive** o **False Positive** utilizando evidencia concreta.
+
+La idea principal es sencilla: se cargan eventos en Elastic, se revisan las alertas en Kibana, se investigan los logs asociados y se justifica cada clasificación con base en lo observado.
+
+Puedes revisar el laboratorio aquí: <a href="/blog/cjca-blue-team-laboratorio/" target="_blank" rel="noopener noreferrer">
+  CJCA: Laboratorio Blue Team para practicar triage de alertas
+</a>
+
+---
+
+### Recurso adicional para practicar el reporte
+
+He creado un recurso enfocado específicamente en cómo reportar con un estilo orientado a **CJCA**. En este material explico las partes principales que debería incluir un reporte, cómo organizar la evidencia, cómo redactar hallazgos de forma clara y cómo presentar el análisis sin limitarse únicamente a pegar comandos o capturas.
+
+El recurso también incluye un ejemplo práctico, lo cual puede servir como referencia para entender cómo transformar la información recolectada durante la práctica en un reporte más ordenado y útil.
+
+La idea no es memorizar una plantilla, sino acostumbrarse a documentar con intención: explicar qué se hizo, qué se encontró, por qué es relevante y cómo se llegó a cada conclusión.
+
+Puedes revisar el recurso aquí:  <a href="/blog/cja_reporte/" target="_blank" rel="noopener noreferrer">
+  Guía para crear un reporte estilo CJCA
+</a>
+
+---
+
 
 ## Conclusión
 

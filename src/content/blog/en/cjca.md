@@ -79,13 +79,49 @@ Even so, I do not think you should limit yourself only to these machines. Ideall
 
 My recommendation is to try solving them on your own first. This helps you identify your own weaknesses: what things you did not enumerate, which services you overlooked, which commands you forgot to run, or where in the process you got stuck.
 
-After trying, you can complement your work with videos, writeups, or guides to compare your path with other people’s approaches. The idea is not to copy the solution, but to detect missing pieces in your methodology and incorporate them into your own way of working.
+After trying, you can complement your work with videos, writeups, or guides to compare your path with other people's approaches. The idea is not to copy the solution, but to detect missing pieces in your methodology and incorporate them into your own way of working.
 
 The Easy machine catalog on Hack The Box, both Linux and Windows, is quite broad. However, I think it is important not to move too far away from the scope of the preparation path.
 
 For example, if the path does not go deep into Active Directory, then spending time practicing AD environments should not be a specific priority for CJCA. It can be useful for your general growth, but it is not necessarily the most important thing when preparing for this certification.
 
 Use these machines as a starting point, but not as a definitive list. The real goal is to build a methodology that you can apply in different scenarios, not to memorize a specific exploitation path.
+
+---
+
+## Key Topics Worth Reinforcing
+
+### Linux Permissions
+
+In addition to practicing machines, I also recommend reinforcing some concepts that often appear in a practical way during preparation. One of them is understanding Linux permissions well, especially when working with files and directories.
+
+Sometimes it is not enough to know that a file exists. We also need to understand what permissions we have over each part of the path. In Linux, permissions do not work the same way for files as they do for directories. For example, on a directory, the read permission allows you to list its contents, but the execute permission allows you to traverse it if you know the exact name of the file or subdirectory.
+
+This is important because, in certain scenarios, you may not be able to list a directory with `ls`, but you may still be able to access a file if you know the full path and have the necessary permissions to traverse the previous directories.
+
+| Directory permission | What it allows |
+| --- | --- |
+| `r` read | Allows you to see the names inside the directory, as long as the necessary permissions to access them also exist. |
+| `w` write | Allows you to create, delete, or rename files inside the directory, usually together with `x`. |
+| `x` execute | Allows you to traverse the directory and access internal elements if you know their exact name. |
+
+That is why, during enumeration, we should not only ask ourselves "what files exist?", but also "what paths do we know?", "what permissions do we have on each directory?", and "what information could we read if we find a valid path?".
+
+This kind of detail helps a lot when building methodology. It is not about memorizing a specific path or an isolated technique, but about understanding how the operating system reasons and how we can validate our hypotheses in an organized way. In a practical exam, that difference can be key: many times progress does not come from running more tools, but from correctly interpreting permissions, paths, users, groups, and accessible files.
+
+### Post-Exploitation With Enumeration Tools
+
+Another important point is to practice post-exploitation in an organized way. After gaining access to a system, we should not limit ourselves to looking for a flag or randomly checking files. Ideally, we should have a clear methodology to understand the environment: current user, groups, permissions, processes, services, scheduled tasks, configurations, exposed credentials, interesting paths, and possible ways to escalate privileges.
+
+In this phase, enumeration tools can be very useful, especially when we get stuck or feel that we have already reviewed the most obvious things. One of the best known is **PEASS-ng**, which includes scripts such as `linpeas` and `winpeas` to support enumeration on Linux and Windows.
+
+You can review the project here: <a href="https://github.com/peass-ng/PEASS-ng/" target="_blank" rel="noopener noreferrer">
+  PEASS-ng on GitHub
+</a>
+
+The idea is not to depend completely on these tools or execute scripts without understanding their output. What matters is using them as support within our post-exploitation methodology: reviewing the findings, interpreting what they mean, manually validating what is relevant, and deciding the next step based on evidence.
+
+Including tools like PEASS-ng in your practice helps you recognize common patterns, detect weak configurations, and reinforce the habit of enumerating before trying to escalate privileges. In the end, the tool does not replace methodology, but it can help us be more organized and avoid missing important details.
 
 ---
 
@@ -157,9 +193,9 @@ Every time I obtained a relevant result, I immediately added:
 
 This allowed me to keep a clear history of every action performed and avoid having to reconstruct processes hours later.
 
-I also recommend reviewing **Bruno Rocha Moura’s** resource about CPTS reports:
-
-> [Read the CPTS report resource](https://www.brunorochamoura.com/posts/cpts-report/)
+I also recommend reviewing **Bruno Rocha Moura's** resource about CPTS reports: <a href="https://www.brunorochamoura.com/posts/cpts-report/" target="_blank" rel="noopener noreferrer">
+  Read the CPTS report resource
+</a>
 
 Although it is focused on CPTS, many of the documentation, structure, and evidence presentation principles also apply to CJCA. It can serve as an excellent reference to understand how to present findings in a clear, organized, and professional way.
 
@@ -216,6 +252,38 @@ Because of that, I had to go back and collect additional evidence from points th
 My recommendation is simple: document every relevant step. If you are unsure whether a screenshot is worth taking, it probably is.
 
 It is better to have more evidence than you need than to discover at the end that you are missing an important screenshot to explain how you reached a finding.
+
+---
+
+## Additional Resources
+
+### Additional Resource to Practice Blue Team
+
+For those who want to practice this part with an approach closer to defensive analysis, I created a specific resource called **CJCA: Blue Team Lab to Practice Alert Triage**.
+
+The lab is called **Aurelius Blue Alert Lab** and is designed to practice alert triage in **Elastic/Kibana** from a safe, synthetic, analysis-oriented environment. The scenario simulates **Aurelius Labs**, a fictional company where the analyst's objective is to review a set of alerts, investigate the related logs, and classify them as **True Positive** or **False Positive** using concrete evidence.
+
+The main idea is simple: events are loaded into Elastic, alerts are reviewed in Kibana, the associated logs are investigated, and each classification is justified based on what was observed.
+
+You can review the lab here: <a href="/en/blog/cjca-blue-team-laboratorio/" target="_blank" rel="noopener noreferrer">
+  CJCA: Blue Team Lab to Practice Alert Triage
+</a>
+
+---
+
+### Additional Resource to Practice Reporting
+
+I created a resource focused specifically on how to report with a **CJCA-oriented** style. In this material, I explain the main parts a report should include, how to organize evidence, how to write findings clearly, and how to present the analysis without limiting yourself to only pasting commands or screenshots.
+
+The resource also includes a practical example, which can serve as a reference to understand how to transform the information collected during practice into a more organized and useful report.
+
+The idea is not to memorize a template, but to get used to documenting with intention: explaining what was done, what was found, why it matters, and how each conclusion was reached.
+
+You can review the resource here: <a href="/en/blog/cja_reporte/" target="_blank" rel="noopener noreferrer">
+  Guide to Creating a CJCA-Style Report
+</a>
+
+---
 
 ## Conclusion
 
