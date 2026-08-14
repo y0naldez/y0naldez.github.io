@@ -4,6 +4,7 @@ description: "In this post, I share a practical example of how to structure a CJ
 pubDate: 2026-06-06T12:00:00-06:00
 heroImage: '../../../assets/reporte.png'
 lang: "en"
+category: "CJCA"
 ---
 
 In this post, I want to share a practical example of how a report can be structured using an approach similar to the one used in Hack The Box's CJCA certification.

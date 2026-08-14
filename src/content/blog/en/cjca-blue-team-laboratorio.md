@@ -4,6 +4,7 @@ description: "Aurelius Blue Alert Lab, a defensive and synthetic lab inspired by
 pubDate: 2026-06-26T12:00:00-06:00
 heroImage: '../../../assets/cjca_blue.png'
 lang: "en"
+category: "CJCA"
 ---
 
 In this post, I want to share a lab I created to practice the defensive part of CJCA from a safe, synthetic, and alert-analysis-focused approach.

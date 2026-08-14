@@ -1,0 +1,187 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import FormattedDate from './FormattedDate.astro';
+
+type Props = { posts: CollectionEntry<'blog'>[]; lang: 'es' | 'en' };
+const { posts, lang } = Astro.props;
+const isSpanish = lang === 'es';
+const fallbackCategory = isSpanish ? 'Otros' : 'Other';
+const getCategory = (post: CollectionEntry<'blog'>) => post.data.category?.trim() || fallbackCategory;
+const categories = [...new Set(posts.map(getCategory))]
+	.sort((a, b) => a.localeCompare(b, lang))
+	.map((name) => ({ name, count: posts.filter((post) => getCategory(post) === name).length }));
+
+const copy = isSpanish
+	? {
+		badge: 'Biblioteca', title: 'Explora todos los recursos',
+		description: 'Encuentra guías, laboratorios y experiencias de certificación por tema o palabra clave.',
+		posts: 'publicaciones', categories: 'categorías', searchLabel: 'Buscar publicaciones',
+		searchPlaceholder: 'Buscar por título, tema o certificación…', filterLabel: 'Filtrar por categoría',
+		all: 'Todos', resultSingular: 'publicación encontrada', resultPlural: 'publicaciones encontradas',
+		emptyTitle: 'No encontré coincidencias', emptyText: 'Prueba otra búsqueda o selecciona una categoría diferente.',
+	}
+	: {
+		badge: 'Library', title: 'Explore all resources',
+		description: 'Find guides, labs, and certification experiences by topic or keyword.',
+		posts: 'posts', categories: 'categories', searchLabel: 'Search posts',
+		searchPlaceholder: 'Search by title, topic, or certification…', filterLabel: 'Filter by category',
+		all: 'All', resultSingular: 'post found', resultPlural: 'posts found',
+		emptyTitle: 'No matches found', emptyText: 'Try another search or select a different category.',
+	};
+---
+
+<section class="blog-library" data-result-singular={copy.resultSingular} data-result-plural={copy.resultPlural}>
+	<header class="library-header">
+		<div>
+			<p class="eyebrow">{copy.badge}</p>
+			<h1>{copy.title}</h1>
+			<p class="library-description">{copy.description}</p>
+		</div>
+		<div class="library-stats" aria-label={`${posts.length} ${copy.posts}, ${categories.length} ${copy.categories}`}>
+			<span><strong>{posts.length}</strong> {copy.posts}</span><span aria-hidden="true">·</span>
+			<span><strong>{categories.length}</strong> {copy.categories}</span>
+		</div>
+	</header>
+
+	<div class="discovery-panel">
+		<label class="search-field">
+			<span class="sr-only">{copy.searchLabel}</span>
+			<svg aria-hidden="true" viewBox="0 0 24 24"><path d="m21 21-4.35-4.35m2.35-5.4A7.75 7.75 0 1 1 3.5 11.25a7.75 7.75 0 0 1 15.5 0Z"></path></svg>
+			<input type="search" data-post-search placeholder={copy.searchPlaceholder} autocomplete="off" />
+		</label>
+		<div class="filter-row">
+			<p>{copy.filterLabel}</p>
+			<div class="category-strip" role="group" aria-label={copy.filterLabel}>
+				<button class="category-filter is-active" type="button" data-category="all" aria-pressed="true">{copy.all}<span>{posts.length}</span></button>
+				{categories.map((category) => (
+					<button class="category-filter" type="button" data-category={category.name} aria-pressed="false">{category.name}<span>{category.count}</span></button>
+				))}
+			</div>
+		</div>
+	</div>
+
+	<div class="results-heading">
+		<p data-results-status aria-live="polite">{posts.length} {copy.resultPlural}</p><span></span>
+	</div>
+
+	<ul class="posts-grid">
+		{posts.map((post) => {
+			const category = getCategory(post);
+			const searchText = `${post.data.title} ${post.data.description} ${category}`;
+			return (
+				<li class="post-card" data-post-card data-category={category} data-search={searchText}>
+					<a href={`${isSpanish ? '/blog' : '/en/blog'}/${post.id.replace(/^(es|en)\//, '')}/`}>
+						{post.data.heroImage && <div class="post-image"><Image width={520} height={293} src={post.data.heroImage} alt={post.data.title} /></div>}
+						<div class="post-content">
+							<div class="post-meta"><span class="post-category">{category}</span><p class="date"><FormattedDate date={post.data.pubDate} /></p></div>
+							<h2 class="title">{post.data.title}</h2>
+							<p class="description">{post.data.description}</p>
+						</div>
+					</a>
+				</li>
+			);
+		})}
+	</ul>
+
+	<div class="empty-state" data-empty-state hidden>
+		<div aria-hidden="true">⌕</div><h2>{copy.emptyTitle}</h2><p>{copy.emptyText}</p>
+	</div>
+</section>
+
+<script>
+	const library = document.querySelector('.blog-library');
+	if (library) {
+		const searchInput = library.querySelector('[data-post-search]');
+		const filters = Array.from(library.querySelectorAll('[data-category]'));
+		const cards = Array.from(library.querySelectorAll('[data-post-card]'));
+		const status = library.querySelector('[data-results-status]');
+		const emptyState = library.querySelector('[data-empty-state]');
+		let activeCategory = 'all';
+		const normalize = (value) => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase();
+
+		const updateResults = () => {
+			const query = normalize(searchInput?.value || '');
+			let visibleCount = 0;
+			for (const card of cards) {
+				const matchesCategory = activeCategory === 'all' || card.dataset.category === activeCategory;
+				const isVisible = matchesCategory && normalize(card.dataset.search || '').includes(query);
+				card.hidden = !isVisible;
+				if (isVisible) visibleCount += 1;
+			}
+			if (status) {
+				const label = visibleCount === 1 ? library.dataset.resultSingular : library.dataset.resultPlural;
+				status.textContent = `${visibleCount} ${label}`;
+			}
+			if (emptyState) emptyState.hidden = visibleCount > 0;
+		};
+
+		for (const filter of filters) {
+			filter.addEventListener('click', () => {
+				activeCategory = filter.dataset.category || 'all';
+				for (const button of filters) {
+					const isActive = button === filter;
+					button.classList.toggle('is-active', isActive);
+					button.setAttribute('aria-pressed', String(isActive));
+				}
+				updateResults();
+			});
+		}
+		searchInput?.addEventListener('input', updateResults);
+	}
+</script>
+
+<style>
+	.blog-library { display: grid; gap: 2rem; width: min(100% - 2rem, 1200px); margin: 0 auto; padding: 3rem 0 4rem; }
+	.library-header { display: flex; align-items: end; justify-content: space-between; gap: 2rem; padding: 2rem; background: radial-gradient(circle at 90% 10%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 32%), color-mix(in srgb, var(--surface) 84%, transparent); border: 1px solid rgb(var(--gray-light)); border-radius: 24px; box-shadow: var(--box-shadow); }
+	.eyebrow { display: inline-flex; margin: 0 0 .85rem; padding: .35rem .75rem; color: var(--accent); font-size: .78rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; background: color-mix(in srgb, var(--accent) 14%, transparent); border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent); border-radius: 999px; }
+	.library-header h1 { margin: 0 0 .7rem; font-size: clamp(2rem, 5vw, 3.25rem); line-height: 1; letter-spacing: -.055em; }
+	.library-description { max-width: 670px; margin: 0; color: rgb(var(--gray)); font-size: 1.03rem; line-height: 1.65; }
+	.library-stats { display: flex; align-items: center; gap: .6rem; flex: 0 0 auto; padding: .8rem 1rem; color: rgb(var(--gray)); white-space: nowrap; background: color-mix(in srgb, var(--surface) 75%, transparent); border: 1px solid rgb(var(--gray-light)); border-radius: 14px; }
+	.library-stats strong { color: rgb(var(--black)); }
+	.discovery-panel { display: grid; gap: 1rem; padding: 1rem; background: color-mix(in srgb, var(--surface) 74%, transparent); border: 1px solid rgb(var(--gray-light)); border-radius: 18px; }
+	.search-field { display: flex; align-items: center; gap: .75rem; padding: 0 1rem; background: var(--surface); border: 1px solid rgb(var(--gray-light)); border-radius: 13px; transition: border-color .2s ease, box-shadow .2s ease; }
+	.search-field:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent); }
+	.search-field svg { width: 1.2rem; height: 1.2rem; fill: none; stroke: rgb(var(--gray)); stroke-linecap: round; stroke-width: 1.8; }
+	.search-field input { width: 100%; padding: .9rem 0; color: rgb(var(--black)); font: inherit; background: transparent; border: 0; outline: 0; }
+	.search-field input::placeholder { color: rgb(var(--gray)); }
+	.filter-row { display: grid; gap: .55rem; min-width: 0; }
+	.filter-row > p { margin: 0; color: rgb(var(--gray)); font-size: .78rem; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; }
+	.category-strip { display: flex; gap: .55rem; padding-bottom: .15rem; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; }
+	.category-strip::-webkit-scrollbar { display: none; }
+	.category-filter { display: inline-flex; align-items: center; gap: .55rem; flex: 0 0 auto; padding: .55rem .75rem; color: rgb(var(--gray)); font: inherit; font-size: .88rem; font-weight: 750; background: transparent; border: 1px solid rgb(var(--gray-light)); border-radius: 999px; cursor: pointer; transition: color .2s ease, background .2s ease, border-color .2s ease; }
+	.category-filter span { display: grid; place-items: center; min-width: 1.45rem; height: 1.45rem; padding: 0 .3rem; font-size: .72rem; background: color-mix(in srgb, rgb(var(--gray)) 12%, transparent); border-radius: 999px; }
+	.category-filter:hover, .category-filter:focus-visible, .category-filter.is-active { color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); border-color: color-mix(in srgb, var(--accent) 55%, transparent); }
+	.results-heading { display: flex; align-items: center; gap: 1rem; }
+	.results-heading p { flex: 0 0 auto; margin: 0; color: rgb(var(--gray)); font-size: .88rem; font-weight: 700; }
+	.results-heading span { width: 100%; height: 1px; background: rgb(var(--gray-light)); }
+	.posts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin: 0; padding: 0; list-style: none; }
+	.post-card { max-width: 560px; height: 100%; overflow: hidden; background: var(--surface); border: 1px solid rgb(var(--gray-light)); border-radius: 18px; box-shadow: 0 12px 34px rgba(0, 0, 0, .12); transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease; }
+	.post-card[hidden] { display: none; }
+	.post-card:hover { transform: translateY(-4px); border-color: color-mix(in srgb, var(--accent) 55%, rgb(var(--gray-light))); box-shadow: 0 18px 44px rgba(0, 0, 0, .18); }
+	.post-card a { display: flex; flex-direction: column; height: 100%; color: inherit; text-decoration: none; }
+	.post-image { width: 100%; aspect-ratio: 16 / 9; overflow: hidden; background: rgb(var(--gray-light)); }
+	.post-image img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 0; transition: transform .25s ease; }
+	.post-card:hover .post-image img { transform: scale(1.04); }
+	.post-content { display: flex; flex-direction: column; gap: .8rem; padding: 1.2rem; }
+	.post-meta { display: flex; align-items: center; justify-content: space-between; gap: .75rem; }
+	.post-category { padding: .25rem .55rem; color: var(--accent); font-size: .73rem; font-weight: 850; letter-spacing: .035em; background: color-mix(in srgb, var(--accent) 12%, transparent); border-radius: 999px; }
+	.date { margin: 0; color: rgb(var(--gray)); font-size: .82rem; font-weight: 700; }
+	.title { margin: 0; color: rgb(var(--black)); font-size: 1.3rem; line-height: 1.22; letter-spacing: -.03em; }
+	.description { margin: 0; color: rgb(var(--gray)); font-size: .95rem; line-height: 1.6; }
+	.empty-state { padding: 3rem 1.5rem; text-align: center; background: color-mix(in srgb, var(--surface) 75%, transparent); border: 1px dashed rgb(var(--gray-light)); border-radius: 18px; }
+	.empty-state[hidden] { display: none; }
+	.empty-state div { color: var(--accent); font-size: 2.5rem; }
+	.empty-state h2 { margin: .25rem 0 .4rem; font-size: 1.35rem; }
+	.empty-state p { margin: 0; color: rgb(var(--gray)); }
+	.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+	@media (max-width: 720px) {
+		.blog-library { width: calc(100% - 1rem); padding: 1rem 0 3rem; }
+		.library-header { display: grid; gap: 1.35rem; padding: 1.5rem; border-radius: 18px; }
+		.library-description { font-size: .96rem; }
+		.library-stats { width: fit-content; font-size: .86rem; }
+		.discovery-panel { padding: .75rem; }
+		.posts-grid { grid-template-columns: 1fr; }
+		.post-card { max-width: none; }
+	}
+</style>

@@ -22,6 +22,9 @@ const blog = defineCollection({
 			// Language for filtering posts.
 			lang: z.enum(['es', 'en']).default('es'),
 
+			// Collection used to group related posts on the blog index.
+			category: z.string().optional(),
+
 			// Optional tags for categories later.
 			tags: z.array(z.string()).optional(),
 		}),

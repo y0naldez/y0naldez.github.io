@@ -700,21 +700,51 @@ const tocExpandLabel = lang === 'es' ? 'Expandir contenido' : 'Expand content';
 						return heading ? { link, heading } : null;
 					})
 					.filter(Boolean);
+				let activeSection;
+
+				const keepActiveLinkVisible = (link) => {
+					if (toc.classList.contains('is-collapsed')) return;
+
+					requestAnimationFrame(() => {
+						const tocRect = toc.getBoundingClientRect();
+						const linkRect = link.getBoundingClientRect();
+						const scrollPadding = 20;
+						const visibleTop = tocRect.top + scrollPadding;
+						const visibleBottom = tocRect.bottom - scrollPadding;
+
+						if (linkRect.top < visibleTop) {
+							toc.scrollTo({
+								top: toc.scrollTop + linkRect.top - visibleTop,
+								behavior: 'smooth',
+							});
+						} else if (linkRect.bottom > visibleBottom) {
+							toc.scrollTo({
+								top: toc.scrollTop + linkRect.bottom - visibleBottom,
+								behavior: 'smooth',
+							});
+						}
+					});
+				};
 
 				const setActiveSection = () => {
-					let activeSection = sections[0];
+					let nextActiveSection = sections[0];
 
 					for (const section of sections) {
 						if (section.heading.getBoundingClientRect().top <= 160) {
-							activeSection = section;
+							nextActiveSection = section;
 						}
 					}
 
 					for (const section of sections) {
-						const isActive = section === activeSection;
+						const isActive = section === nextActiveSection;
 
 						section.link.classList.toggle('is-active', isActive);
 						section.link.toggleAttribute('aria-current', isActive);
+					}
+
+					if (nextActiveSection && nextActiveSection !== activeSection) {
+						activeSection = nextActiveSection;
+						keepActiveLinkVisible(activeSection.link);
 					}
 				};
 

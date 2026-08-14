@@ -4,6 +4,7 @@ description: "I share how I prepared for the CJCA, what I learned during the pro
 pubDate: 2026-06-03
 heroImage: '../../../assets/cjca.jpg'
 lang: "en"
+category: "CJCA"
 ---
 
 In this post, I want to share a guide based on my experience preparing for and passing the Hack The Box CJCA certification.

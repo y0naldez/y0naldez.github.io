@@ -4,6 +4,7 @@ description: "En este post muestro un ejemplo práctico de cómo estructurar un 
 pubDate: 2026-06-06T12:00:00-06:00
 heroImage: '../../../assets/reporte.png'
 lang: "es"
+category: "CJCA"
 ---
 
 En este post quiero compartir un ejemplo práctico de cómo puede estructurarse un reporte con enfoque similar al utilizado en la certificación CJCA de Hack The Box.
