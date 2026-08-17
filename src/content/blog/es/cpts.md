@@ -337,6 +337,24 @@ Con el tiempo notarás que muchas técnicas vuelven a aparecer, pero casi siempr
 
 La meta es que puedas adaptarte al escenario que tienes delante en lugar de depender de una secuencia que ya hayas visto.
 
+### Recurso recomendado: notas de Active Directory de ArtesOscuras
+
+Para profundizar en estos temas, puedes consultar las <a href="https://github.com/ArtesOscuras/Notes/tree/main/Active%20Directory" target="_blank" rel="noopener noreferrer">
+  notas de Active Directory creadas por ArtesOscuras
+</a>.
+
+El repositorio organiza distintas técnicas y formas de abuso en secciones dedicadas a **Kerberos**, **persistencia**, **relaciones de confianza**, **DNS**, **MSSQL**, **gMSA** y recopilación de información con **BloodHound**, entre otros temas.
+
+También incluye un apartado específico sobre abuso de DACLs con notas para permisos y técnicas como:
+
+- `GenericAll`, `GenericWrite` y `AllExtendedRights`.
+- `WriteDACL`, `WriteOwner` y `WriteSPN`.
+- `AddMember` y `AddSelf`.
+- `ForceChangePassword`.
+- `AddKeyCredentialLink` o *Shadow Credentials*.
+
+Más que utilizar el repositorio como una lista de comandos, úsalo como referencia para ampliar tus propias notas. Para cada técnica, documenta qué permiso necesitas, sobre qué tipo de objeto puede aplicarse, qué resultado produce y cómo validar que el abuso funcionó. De esta forma tendrás una guía que podrás adaptar al contexto del dominio en lugar de depender de una receta fija.
+
 ---
 
 ## La famosa flag 8

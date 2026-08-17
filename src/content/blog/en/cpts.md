@@ -337,6 +337,24 @@ Over time, you will notice that many techniques appear repeatedly, but almost al
 
 Your goal is to adapt to the scenario in front of you instead of depending on a sequence you have already seen.
 
+### Recommended resource: Active Directory notes by ArtesOscuras
+
+To study these topics in greater depth, take a look at the <a href="https://github.com/ArtesOscuras/Notes/tree/main/Active%20Directory" target="_blank" rel="noopener noreferrer">
+  Active Directory notes created by ArtesOscuras
+</a>.
+
+The repository organizes techniques and abuse paths into dedicated sections covering **Kerberos**, **persistence**, **domain trusts**, **DNS**, **MSSQL**, **gMSA**, and information collection with **BloodHound**, among other topics.
+
+It also contains a dedicated DACL abuse section with notes on permissions and techniques such as:
+
+- `GenericAll`, `GenericWrite`, and `AllExtendedRights`.
+- `WriteDACL`, `WriteOwner`, and `WriteSPN`.
+- `AddMember` and `AddSelf`.
+- `ForceChangePassword`.
+- `AddKeyCredentialLink`, also known as *Shadow Credentials*.
+
+Rather than treating the repository as a list of commands, use it as a reference for expanding your own notes. For each technique, document the required permission, the object types it applies to, the expected result, and how to verify that the abuse worked. This gives you a guide you can adapt to the domain context instead of relying on a fixed recipe.
+
 ---
 
 ## The famous Flag 8
