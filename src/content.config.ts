@@ -22,6 +22,9 @@ const blog = defineCollection({
 			// Language for filtering posts.
 			lang: z.enum(['es', 'en']).default('es'),
 
+			// Stable identifier shared by translations that may use different slugs.
+			translationKey: z.string().optional(),
+
 			// Collection used to group related posts on the blog index.
 			category: z.string().optional(),
 

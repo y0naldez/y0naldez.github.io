@@ -1,19 +1,56 @@
 ---
+import { getCollection } from 'astro:content';
+
 const path = Astro.url.pathname;
+const isEnglish = path === '/en' || path.startsWith('/en/');
 
 let targetPath = '/en/';
 let label = 'EN';
+let ariaLabel = 'Cambiar a inglés';
 
-if (path.startsWith('/en')) {
+if (isEnglish) {
 	targetPath = path.replace(/^\/en/, '') || '/';
 	label = 'ES';
+	ariaLabel = 'Switch to Spanish';
 } else {
 	targetPath = `/en${path}`;
 	label = 'EN';
 }
+
+const blogPrefix = isEnglish ? '/en/blog/' : '/blog/';
+
+if (path.startsWith(blogPrefix)) {
+	const currentSlug = path.slice(blogPrefix.length).replace(/\/$/, '');
+
+	if (currentSlug) {
+		const currentLanguage = isEnglish ? 'en' : 'es';
+		const targetLanguage = isEnglish ? 'es' : 'en';
+		const posts = await getCollection('blog');
+		const currentPost = posts.find(
+			(post) =>
+				post.data.lang === currentLanguage &&
+				post.id.replace(/^(es|en)\//, '') === currentSlug,
+		);
+
+		if (currentPost?.data.translationKey) {
+			const translatedPost = posts.find(
+				(post) =>
+					post.data.lang === targetLanguage &&
+					post.data.translationKey === currentPost.data.translationKey,
+			);
+
+			if (translatedPost) {
+				const translatedSlug = translatedPost.id.replace(/^(es|en)\//, '');
+				targetPath = isEnglish
+					? `/blog/${translatedSlug}/`
+					: `/en/blog/${translatedSlug}/`;
+			}
+		}
+	}
+}
 ---
 
-<a class="language-switch" href={targetPath} aria-label="Cambiar idioma">
+<a class="language-switch" href={targetPath} aria-label={ariaLabel}>
 	{label}
 </a>
 

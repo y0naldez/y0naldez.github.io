@@ -4,6 +4,7 @@ description: "Una metodología práctica para enumerar Active Directory, convert
 pubDate: 2026-08-30T12:00:00-06:00
 heroImage: '../../../assets/cpts/ad.png'
 lang: "es"
+translationKey: "active-directory-methodology"
 category: "CPTS"
 ---
 
