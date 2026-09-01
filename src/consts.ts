@@ -3,3 +3,4 @@
 
 export const SITE_TITLE = 'B4NGG Blog';
 export const SITE_DESCRIPTION = 'Welcome to my website!';
+export const CONTACT_EMAIL = 'contact@b4ngg.com';

@@ -1,5 +1,5 @@
 ---
-import { SITE_TITLE } from '../consts';
+import { CONTACT_EMAIL, SITE_TITLE } from '../consts';
 import HeaderLink from './HeaderLink.astro';
 import ThemeToggle from './ThemeToggle.astro';
 import LanguageSwitch from './LanguageSwitch.astro';
@@ -13,6 +13,7 @@ const aboutHref = isEnglish ? '/en/about' : '/about';
 const homeLabel = isEnglish ? 'Home' : 'Inicio';
 const blogLabel = 'Blog';
 const aboutLabel = isEnglish ? 'About' : 'Acerca de mí';
+const emailLabel = isEnglish ? 'Send an email' : 'Enviar un correo';
 ---
 
 <header>
@@ -43,6 +44,16 @@ const aboutLabel = isEnglish ? 'About' : 'Acerca de mí';
 						<path
 							fill="currentColor"
 							d="M23.5 6.2s-.2-1.7-.9-2.4c-.9-.9-1.9-.9-2.4-1C16.8 2.5 12 2.5 12 2.5s-4.8 0-8.2.3c-.5.1-1.5.1-2.4 1C.7 4.5.5 6.2.5 6.2S.2 8.1.2 10v1.8c0 1.9.3 3.8.3 3.8s.2 1.7.9 2.4c.9.9 2.1.9 2.6 1 1.9.2 8 .3 8 .3s4.8 0 8.2-.3c.5-.1 1.5-.1 2.4-1 .7-.7.9-2.4.9-2.4s.3-1.9.3-3.8V10c0-1.9-.3-3.8-.3-3.8zM9.8 14.8V7.4l6.3 3.7-6.3 3.7z"
+						/>
+					</svg>
+				</a>
+
+				<a href={`mailto:${CONTACT_EMAIL}`} title={`${emailLabel}: ${CONTACT_EMAIL}`}>
+					<span class="sr-only">{emailLabel}: {CONTACT_EMAIL}</span>
+					<svg viewBox="0 0 24 24" aria-hidden="true" width="32" height="32">
+						<path
+							fill="currentColor"
+							d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 4-8 5-8-5V6l8 5 8-5v2Z"
 						/>
 					</svg>
 				</a>
